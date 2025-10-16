@@ -1,0 +1,23 @@
+{
+  "instanceId": "evvm-1760644170989-pzvzohxrz",
+  "config": {
+    "txCount": 25,
+    "mode": "parallel"
+  },
+  "results": [
+    {
+      "mode": "parallel",
+      "totalTransactions": 25,
+      "successfulTransactions": 25,
+      "failedTransactions": 0,
+      "totalTimeMs": 38,
+      "averageLatencyMs": 1.52,
+      "tps": 657.8947368421053,
+      "totalGasUsed": "457023",
+      "averageGasPerTx": "18280",
+      "errors": [],
+      "timestamp": "2025-10-16T19:50:05.471Z"
+    }
+  ],
+  "timestamp": "2025-10-16T19:50:05.474Z"
+}

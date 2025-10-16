@@ -1,36 +1,10 @@
-// Hardhat 3.0.7 Plugin Entry Point
-import { extendEnvironment } from "hardhat/config";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { task } from "hardhat/config";
-import chalk from "chalk";
-import ora from "ora";
-import fs from "fs-extra";
-import path from "path";
-
-// Import our plugin classes
-import { evvmPlugin, EVVMInstance, BenchmarkResult } from "./plugin.mjs";
-
-// Extend Hardhat's runtime environment
-extendEnvironment((hre: HardhatRuntimeEnvironment) => {
-  hre.evvm = {
-    // EVVM configuration
-    sepoliaContract: "0xF817e9ad82B4a19F00dA7A248D9e556Ba96e6366",
-    mateStakingContract: "0x8eB2525239781e06dBDbd95d83c957C431CF2321",
-    nameServiceContract: "0x8038e87dc67D87b31d890FD01E855a8517ebfD24",
-    faucetUrl: "https://evvm.dev",
-    
-    // Arcology configuration
-    arcologyRpcUrl: "https://devnet.arcology.network",
-    
-    // Benchmark configuration
-    defaultTxCount: 100,
-    defaultConcurrency: 4,
-    defaultTimeout: 30000,
-    
-    // Plugin instance
-    plugin: evvmPlugin
-  };
-});
+// Hardhat 3 Tasks - Working Version
+const { task } = require("hardhat/config");
+const { evvmPlugin, EVVMInstance, BenchmarkResult } = require("./plugin.js");
+const chalk = require("chalk");
+const ora = require("ora");
+const fs = require("fs-extra");
+const path = require("path");
 
 // Task: evvm:init
 task("evvm:init", "Initialize an EVVM test instance")
@@ -39,10 +13,10 @@ task("evvm:init", "Initialize an EVVM test instance")
     const spinner = ora("Initializing EVVM instance...").start();
     
     try {
-      const instance = await hre.evvm.plugin.initInstance(taskArgs.name);
+      const instance = await evvmPlugin.initInstance(taskArgs.name);
       
       // Save instance to file
-      const instancesDir = path.join(hre.config.paths.root, "instances");
+      const instancesDir = path.join(process.cwd(), "instances");
       await fs.ensureDir(instancesDir);
       
       const instanceFile = path.join(instancesDir, `${instance.id}.json`);
@@ -68,7 +42,7 @@ task("evvm:deploy", "Deploy a contract to EVVM instance")
     
     try {
       // Load instance
-      const instancesDir = path.join(hre.config.paths.root, "instances");
+      const instancesDir = path.join(process.cwd(), "instances");
       const instanceFile = path.join(instancesDir, `${taskArgs.instanceId}.json`);
       
       if (!await fs.pathExists(instanceFile)) {
@@ -78,7 +52,7 @@ task("evvm:deploy", "Deploy a contract to EVVM instance")
       const instance: EVVMInstance = await fs.readJson(instanceFile);
       
       // Deploy contract
-      const deployedInstance = await hre.evvm.plugin.deployContract(instance, taskArgs.contract);
+      const deployedInstance = await evvmPlugin.deployContract(instance, taskArgs.contract);
       
       // Save updated instance
       await fs.writeJson(instanceFile, deployedInstance, { spaces: 2 });
@@ -104,7 +78,7 @@ task("evvm:benchmark", "Run performance benchmark on EVVM instance")
     
     try {
       // Load instance
-      const instancesDir = path.join(hre.config.paths.root, "instances");
+      const instancesDir = path.join(process.cwd(), "instances");
       const instanceFile = path.join(instancesDir, `${taskArgs.instanceId}.json`);
       
       if (!await fs.pathExists(instanceFile)) {
@@ -118,24 +92,24 @@ task("evvm:benchmark", "Run performance benchmark on EVVM instance")
       
       if (taskArgs.mode === "all" || taskArgs.mode === "serial") {
         spinner.text = "Running serial benchmark...";
-        const serialResult = await hre.evvm.plugin.runBenchmark(instance, "serial", txCount);
+        const serialResult = await evvmPlugin.runBenchmark(instance, "serial", txCount);
         results.push(serialResult);
       }
       
       if (taskArgs.mode === "all" || taskArgs.mode === "parallel") {
         spinner.text = "Running parallel benchmark...";
-        const parallelResult = await hre.evvm.plugin.runBenchmark(instance, "parallel", txCount);
+        const parallelResult = await evvmPlugin.runBenchmark(instance, "parallel", txCount);
         results.push(parallelResult);
       }
       
       if (taskArgs.mode === "all" || taskArgs.mode === "evvm-async") {
         spinner.text = "Running EVVM async benchmark...";
-        const evvmResult = await hre.evvm.plugin.runBenchmark(instance, "evvm-async", txCount);
+        const evvmResult = await evvmPlugin.runBenchmark(instance, "evvm-async", txCount);
         results.push(evvmResult);
       }
       
       // Save results
-      const resultsDir = path.join(hre.config.paths.root, "benchmark-results");
+      const resultsDir = path.join(process.cwd(), "benchmark-results");
       await fs.ensureDir(resultsDir);
       
       const resultsFile = path.join(resultsDir, `${instance.id}-${Date.now()}.json`);
@@ -159,7 +133,7 @@ task("evvm:benchmark", "Run performance benchmark on EVVM instance")
         console.log(`  TPS: ${result.tps.toFixed(2)}`);
         console.log(`  Latency: ${result.averageLatencyMs.toFixed(2)}ms`);
         console.log(`  Success Rate: ${((result.successfulTransactions / result.totalTransactions) * 100).toFixed(1)}%`);
-        console.log(`  Gas Used: ${result.totalGasUsed}`);
+        console.log(`  Gas Used: ${result.totalGasUsed.toString()}`);
       });
       
       console.log(chalk.blue(`\nResults saved to: ${resultsFile}`));
@@ -174,7 +148,7 @@ task("evvm:benchmark", "Run performance benchmark on EVVM instance")
 // Task: evvm:list
 task("evvm:list", "List all EVVM instances")
   .setAction(async (taskArgs, hre) => {
-    const instancesDir = path.join(hre.config.paths.root, "instances");
+    const instancesDir = path.join(process.cwd(), "instances");
     
     if (!await fs.pathExists(instancesDir)) {
       console.log(chalk.yellow("No instances found. Run 'npx hardhat evvm:init' to create one."));
@@ -201,63 +175,3 @@ task("evvm:list", "List all EVVM instances")
     
     return instances;
   });
-
-// Task: evvm:demo
-task("evvm:demo", "Run a complete demo workflow")
-  .setAction(async (taskArgs, hre) => {
-    console.log(chalk.blue.bold('\n🚀 Virtual Chain Sandbox Demo'));
-    console.log(chalk.gray('Running complete workflow...\n'));
-    
-    try {
-      // Step 1: Initialize instance
-      console.log(chalk.yellow('Step 1: Initializing EVVM instance...'));
-      const instance = await hre.evvm.plugin.initInstance('demo-instance');
-      console.log(chalk.green(`✅ Instance created: ${instance.id}\n`));
-      
-      // Step 2: Deploy contract
-      console.log(chalk.yellow('Step 2: Deploying ParallelCounter contract...'));
-      const deployedInstance = await hre.evvm.plugin.deployContract(instance, 'ParallelCounter');
-      console.log(chalk.green(`✅ Contract deployed: ${deployedInstance.contractAddress}\n`));
-      
-      // Step 3: Run benchmarks
-      console.log(chalk.yellow('Step 3: Running performance benchmarks...'));
-      
-      const serialResult = await hre.evvm.plugin.runBenchmark(deployedInstance, 'serial', 50);
-      const parallelResult = await hre.evvm.plugin.runBenchmark(deployedInstance, 'parallel', 50);
-      const evvmResult = await hre.evvm.plugin.runBenchmark(deployedInstance, 'evvm-async', 50);
-      
-      // Display results
-      console.log(chalk.blue.bold('\n📊 Demo Results:'));
-      console.log(chalk.green(`\nSERIAL: ${serialResult.tps.toFixed(2)} TPS, ${serialResult.averageLatencyMs.toFixed(2)}ms latency`));
-      console.log(chalk.green(`PARALLEL: ${parallelResult.tps.toFixed(2)} TPS, ${parallelResult.averageLatencyMs.toFixed(2)}ms latency`));
-      console.log(chalk.green(`EVVM ASYNC: ${evvmResult.tps.toFixed(2)} TPS, ${evvmResult.averageLatencyMs.toFixed(2)}ms latency`));
-      
-      const tpsImprovement = ((parallelResult.tps - serialResult.tps) / serialResult.tps) * 100;
-      console.log(chalk.blue(`\n🚀 TPS Improvement: +${tpsImprovement.toFixed(1)}% with Arcology parallel execution!`));
-      
-      console.log(chalk.green('\n✅ Demo completed successfully!'));
-      console.log(chalk.blue('🔗 Open dashboard: http://localhost:3000'));
-      
-      return { serialResult, parallelResult, evvmResult };
-    } catch (error) {
-      console.log(chalk.red(`❌ Demo failed: ${error}`));
-      throw error;
-    }
-  });
-
-// Extend HardhatRuntimeEnvironment type
-declare module "hardhat/types/runtime" {
-  interface HardhatRuntimeEnvironment {
-    evvm: {
-      sepoliaContract: string;
-      mateStakingContract: string;
-      nameServiceContract: string;
-      faucetUrl: string;
-      arcologyRpcUrl: string;
-      defaultTxCount: number;
-      defaultConcurrency: number;
-      defaultTimeout: number;
-      plugin: any;
-    };
-  }
-}

@@ -5,10 +5,10 @@
  * This bypasses TypeScript compilation issues for now
  */
 
-const chalk = require('chalk');
-const ora = require('ora');
-const fs = require('fs-extra');
-const path = require('path');
+import chalk from 'chalk';
+import ora from 'ora';
+import fs from 'fs-extra';
+import path from 'path';
 
 console.log(chalk.blue.bold('\n🚀 Virtual Chain Sandbox - Plugin Test'));
 console.log(chalk.gray('Testing EVVM, Arcology, and Hardhat 3 integration\n'));

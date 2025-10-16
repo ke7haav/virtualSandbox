@@ -1,0 +1,71 @@
+#!/usr/bin/env node
+
+/**
+ * Hardhat EVVM Plugin Wrapper
+ * Makes our CLI tool feel like a Hardhat plugin
+ */
+
+const { spawn } = require('child_process');
+const path = require('path');
+
+// Get the directory where this script is located
+const scriptDir = path.dirname(__filename);
+const cliPath = path.join(scriptDir, 'cli.js');
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+
+// Map Hardhat-style commands to our CLI commands
+const commandMap = {
+  'evvm:init': 'init',
+  'evvm:deploy': 'deploy', 
+  'evvm:benchmark': 'benchmark',
+  'evvm:list': 'list',
+  'evvm:demo': 'demo'
+};
+
+// Check if this is a Hardhat command
+const isHardhatCommand = args[0] && args[0].startsWith('evvm:');
+
+if (isHardhatCommand) {
+  // Convert Hardhat command to our CLI command
+  const hardhatCommand = args[0];
+  const cliCommand = commandMap[hardhatCommand];
+  
+  if (cliCommand) {
+    // Replace the Hardhat command with our CLI command
+    const newArgs = [cliCommand, ...args.slice(1)];
+    
+    console.log(`🔧 Hardhat EVVM Plugin: Converting '${hardhatCommand}' to '${cliCommand}'`);
+    console.log(`📋 Running: node cli.js ${newArgs.join(' ')}\n`);
+    
+    // Run our CLI tool
+    const child = spawn('node', [cliPath, ...newArgs], {
+      stdio: 'inherit',
+      cwd: process.cwd()
+    });
+    
+    child.on('close', (code) => {
+      process.exit(code);
+    });
+  } else {
+    console.error(`❌ Unknown Hardhat EVVM command: ${hardhatCommand}`);
+    console.log('Available commands:');
+    Object.keys(commandMap).forEach(cmd => {
+      console.log(`  ${cmd}`);
+    });
+    process.exit(1);
+  }
+} else {
+  // Not a Hardhat command, show help
+  console.log('🔧 Hardhat EVVM Plugin Wrapper');
+  console.log('This tool provides Hardhat-style commands for EVVM benchmarking.\n');
+  console.log('Usage:');
+  console.log('  npx hardhat evvm:init [name]');
+  console.log('  npx hardhat evvm:deploy <instanceId> [contract]');
+  console.log('  npx hardhat evvm:benchmark <instanceId> [options]');
+  console.log('  npx hardhat evvm:list');
+  console.log('  npx hardhat evvm:demo');
+  console.log('\nOr use directly:');
+  console.log('  node cli.js --help');
+}
