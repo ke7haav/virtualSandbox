@@ -1,0 +1,58 @@
+{
+  "name": "hardhat-evvm-bench",
+  "version": "1.0.0",
+  "description": "Hardhat plugin for EVVM virtual blockchain benchmarking with parallel execution testing",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "dashboard:dev": "cd dashboard && npm run dev",
+    "dashboard:build": "cd dashboard && npm run build",
+    "demo": "npm run build && npx hardhat evvm:benchmark --demo"
+  },
+  "keywords": [
+    "hardhat",
+    "plugin",
+    "evvm",
+    "arcology",
+    "parallel-execution",
+    "benchmarking",
+    "ethereum",
+    "virtual-blockchain"
+  ],
+  "author": "Virtual Chain Sandbox Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "hardhat": "^3.0.0"
+  },
+  "dependencies": {
+    "viem": "^2.0.0",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1",
+    "commander": "^11.0.0",
+    "fs-extra": "^11.1.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "@types/fs-extra": "^11.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "hardhat": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "instanceId": "evvm-1703123456789-abc123def",
+  "config": {
+    "txCount": 100,
+    "concurrency": 4,
+    "timeout": 30000,
+    "demo": true
+  },
+  "serial": {
+    "mode": "serial",
+    "totalTransactions": 100,
+    "successfulTransactions": 95,
+    "failedTransactions": 5,
+    "totalTimeMs": 2000,
+    "averageLatencyMs": 21.05,
+    "tps": 47.5,
+    "totalGasUsed": "2100000",
+    "averageGasPerTx": "22105",
+    "errors": [
+      "Transaction 15 failed: Insufficient gas",
+      "Transaction 42 failed: Contract reverted",
+      "Transaction 67 failed: Network timeout",
+      "Transaction 83 failed: Invalid nonce",
+      "Transaction 91 failed: Contract reverted"
+    ],
+    "timestamp": "2024-01-01T12:00:00Z"
+  },
+  "parallel": {
+    "mode": "parallel",
+    "totalTransactions": 100,
+    "successfulTransactions": 98,
+    "failedTransactions": 2,
+    "totalTimeMs": 500,
+    "averageLatencyMs": 5.1,
+    "tps": 196.0,
+    "totalGasUsed": "1764000",
+    "averageGasPerTx": "18000",
+    "errors": [
+      "Transaction 23 failed: Contract reverted",
+      "Transaction 89 failed: Network timeout"
+    ],
+    "timestamp": "2024-01-01T12:00:00Z"
+  },
+  "evvm": {
+    "mode": "evvm-async",
+    "totalTransactions": 100,
+    "successfulTransactions": 97,
+    "failedTransactions": 3,
+    "totalTimeMs": 650,
+    "averageLatencyMs": 6.7,
+    "tps": 149.2,
+    "totalGasUsed": "1746000",
+    "averageGasPerTx": "18000",
+    "errors": [
+      "Transaction 12 failed: Async nonce conflict",
+      "Transaction 45 failed: Execution function error",
+      "Transaction 78 failed: Relayer validation failed"
+    ],
+    "timestamp": "2024-01-01T12:00:00Z"
+  },
+  "comparison": {
+    "tpsImprovement": 312.6,
+    "latencyImprovement": 75.8,
+    "gasEfficiency": 1.19,
+    "evvmTpsImprovement": 214.1,
+    "evvmLatencyImprovement": 68.2
+  },
+  "timestamp": "2024-01-01T12:00:00Z"
+}
