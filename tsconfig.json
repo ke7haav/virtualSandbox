@@ -19,7 +19,8 @@
     "emitDecoratorMetadata": true
   },
   "include": [
-    "src/**/*"
+    "contracts/**/*",
+    "test/**/*"
   ],
   "exclude": [
     "node_modules",

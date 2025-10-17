@@ -5,36 +5,36 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  FOUNDRY_PROFILE: ci
-
 jobs:
-  check:
-    name: Foundry project
+  test:
+    name: Hardhat Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          submodules: recursive
+          node-version: '18'
+          cache: 'npm'
 
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
+      - name: Install dependencies
+        run: npm install
 
-      - name: Show Forge version
-        run: |
-          forge --version
+      - name: Install dashboard dependencies
+        run: cd dashboard && npm install
 
-      - name: Run Forge fmt
-        run: |
-          forge fmt --check
-        id: fmt
+      - name: Run Hardhat tests
+        run: npx hardhat test
 
-      - name: Run Forge build
-        run: |
-          forge build --sizes
-        id: build
+      - name: Run Hardhat coverage
+        run: npx hardhat coverage
 
-      - name: Run Forge tests
-        run: |
-          forge test -vvv
-        id: test
+      - name: Build dashboard
+        run: npm run dashboard:build
+
+      - name: Test CLI tool
+        run: node cli.cjs demo
+
+      - name: Test Hardhat 3.0.7 integration
+        run: node hardhat3-wrapper.mjs evvm:demo

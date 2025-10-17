@@ -3,27 +3,29 @@
   "version": "1.0.0",
   "description": "Hardhat plugin for EVVM virtual blockchain benchmarking with parallel execution testing",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "cli.cjs",
   "bin": {
     "evvm-bench": "./cli.cjs",
     "hardhat-evvm": "./hardhat-evvm",
     "hardhat3-evvm": "./hardhat3-wrapper.mjs"
   },
   "files": [
-    "dist/**/*",
+    "cli.cjs",
+    "src/plugin.cjs",
+    "hardhat3-wrapper.mjs",
+    "hardhat-evvm",
+    "contracts/",
+    "dashboard/",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
     "test": "hardhat test",
     "coverage": "hardhat coverage",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "dashboard:dev": "cd dashboard && npm run dev",
     "dashboard:build": "cd dashboard && npm run build",
-    "demo": "npm run build && npx hardhat evvm:benchmark --demo"
+    "demo": "node cli.cjs demo"
   },
   "keywords": [
     "hardhat",

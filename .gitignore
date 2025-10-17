@@ -15,6 +15,12 @@ cache/
 artifacts/
 typechain-types/
 
+# Foundry (excluded - using Hardhat only)
+lib/
+out/
+foundry.toml
+foundry.lock
+
 # EVVM instances
 .evvm/
 instances/

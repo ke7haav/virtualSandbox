@@ -1,6 +1,5 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import "./hardhat3-tasks.mjs";
 
 const config: HardhatUserConfig = {
   solidity: {
