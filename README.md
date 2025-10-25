@@ -11,11 +11,6 @@ Virtual Chain Sandbox is a comprehensive benchmarking tool that allows Ethereum 
 - **Benchmark performance** across serial, parallel, and async execution modes
 - **Visualize results** with an interactive React dashboard
 
-## 🏆 Sponsor Prize Alignment
-
-- **EVVM ($1,000)**: Relayer integration, execution function, async nonces
-- **Arcology ($5,000)**: Parallel contracts with 10k+ TPS capability
-- **Hardhat ($5,000)**: Hardhat 3.0.7 integration
 
 ## 🚀 Quick Start
 
